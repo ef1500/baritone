@@ -58,7 +58,10 @@ public final class MineProcess extends BaritoneProcessHelper implements IMinePro
     private List<BlockPos> knownOreLocations;
     private List<BlockPos> blacklist; // inaccessible
     private Map<BlockPos, Long> anticipatedDrops;
-    private BlockPos branchPoint;
+    private BlockPos branchPoint; //main shaft point
+    private BlockPos subshaftPoint; //sub-shaft point
+    private int branchLength; //length of the main branch length. default 128
+    private int subshaftLength; //Length of the subshaft, default 32
     private GoalRunAway branchPointRunaway;
     private int desiredQuantity;
     private int tickCount;
@@ -187,6 +190,7 @@ public final class MineProcess extends BaritoneProcessHelper implements IMinePro
         // only in non-Xray mode (aka legit mode) do we do this
         int y = Baritone.settings().legitMineYLevel.value;
         if (branchPoint == null) {
+          branchLength = 128;
             /*if (!baritone.getPathingBehavior().isPathing() && playerFeet().y == y) {
                 // cool, path is over and we are at desired y
                 branchPoint = playerFeet();
@@ -194,12 +198,23 @@ public final class MineProcess extends BaritoneProcessHelper implements IMinePro
             } else {
                 return new GoalYLevel(y);
             }*/
-            branchPoint = ctx.playerFeet();
+            branchPoint = ctx.playerFeet(); //this is our main shaft
+            branchPoint.z = pos.getZ() + branchLength;
+        }
+
+        if (subshaftPoint == null)
+        {
+        subshaftLength = 32;
+         subshaftPoint = ctx.playerFeet();
+         //create a subshaft
+         subshaftPoint.x = pos.getX() + subshaftLength; //create a subshaft in the x direction
         }
         // TODO shaft mode, mine 1x1 shafts to either side
         // TODO also, see if the GoalRunAway with maintain Y at 11 works even from the surface
         if (branchPointRunaway == null) {
-            branchPointRunaway = new GoalRunAway(1, y, branchPoint) {
+            /*branchPointRunaway = new GoalRunAway(1, y, branchPoint)*/
+             branchPointRunaway = new GoalGetToBlock(branchPoint){
+              //what we want to do here is create a "Main shaft", and then mine subshafts the branch out
                 @Override
                 public boolean isInGoal(int x, int y, int z) {
                     return false;
