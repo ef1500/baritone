@@ -63,6 +63,7 @@ public final class MineProcess extends BaritoneProcessHelper implements IMinePro
     private int branchLength; //length of the main branch length. default 128
     private int subshaftLength; //Length of the subshaft, default 32
     private GoalRunAway branchPointRunaway;
+    private GoalGetToBlock subshaftGoto;
     private int desiredQuantity;
     private int tickCount;
 
@@ -199,21 +200,21 @@ public final class MineProcess extends BaritoneProcessHelper implements IMinePro
                 return new GoalYLevel(y);
             }*/
             branchPoint = ctx.playerFeet(); //this is our main shaft
-            branchPoint.z = pos.getZ() + branchLength;
         }
 
         if (subshaftPoint == null)
         {
         subshaftLength = 32;
-         subshaftPoint = ctx.playerFeet();
+        subshaftPoint = new BlockPos(ctx.playerFeet().getX() + subshaftLength, y, ctx.playerFeet().getZ() + subshaftLength);
          //create a subshaft
-         subshaftPoint.x = pos.getX() + subshaftLength; //create a subshaft in the x direction
         }
-        // TODO shaft mode, mine 1x1 shafts to either side
+        // TODO shaft mode, mine 1x1 shafts to either side (WORKING ON IT!)
         // TODO also, see if the GoalRunAway with maintain Y at 11 works even from the surface
-        if (branchPointRunaway == null) {
-            /*branchPointRunaway = new GoalRunAway(1, y, branchPoint)*/
-             branchPointRunaway = new GoalGetToBlock(branchPoint){
+        if (branchPointRunaway == null)
+       {
+            branchPointRunaway = new GoalRunAway(branchLength, y, branchPoint)
+            {
+             //branchPointRunaway = new GoalGetToBlock(branchPoint){
               //what we want to do here is create a "Main shaft", and then mine subshafts the branch out
                 @Override
                 public boolean isInGoal(int x, int y, int z) {
@@ -222,7 +223,18 @@ public final class MineProcess extends BaritoneProcessHelper implements IMinePro
             };
         }
         return new PathingCommand(branchPointRunaway, PathingCommandType.REVALIDATE_GOAL_AND_PATH);
+        if (subshaftGoto == null)
+        {
+          subshaftGoto = new GoalGetToBlock(subshaftPoint)
+          {
+            @Override
+            public boolean isInGoal(int x, int y, int z) {
+            return false;
+          }
+        }
     }
+    return new PathingCommand(subshaftGoto, PathingCommandType.REVALIDATE_GOAL_AND_PATH);
+  }
 
     private void rescan(List<BlockPos> already, CalculationContext context) {
         if (filter == null) {
