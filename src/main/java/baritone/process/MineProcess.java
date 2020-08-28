@@ -214,7 +214,6 @@ public final class MineProcess extends BaritoneProcessHelper implements IMinePro
        {
             branchPointRunaway = new GoalRunAway(branchLength, y, branchPoint)
             {
-             //branchPointRunaway = new GoalGetToBlock(branchPoint){
               //what we want to do here is create a "Main shaft", and then mine subshafts the branch out
                 @Override
                 public boolean isInGoal(int x, int y, int z) {
@@ -229,7 +228,7 @@ public final class MineProcess extends BaritoneProcessHelper implements IMinePro
           {
             @Override
             public boolean isInGoal(int x, int y, int z) {
-            return false;
+              return false;
           }
         };
     }
