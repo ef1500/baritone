@@ -220,8 +220,8 @@ public final class MineProcess extends BaritoneProcessHelper implements IMinePro
                     return false;
                 }
             };
+          return new PathingCommand(branchPointRunaway, PathingCommandType.REVALIDATE_GOAL_AND_PATH);
         }
-        return new PathingCommand(branchPointRunaway, PathingCommandType.REVALIDATE_GOAL_AND_PATH);
         if (subshaftGoto == null)
         {
           subshaftGoto = new GoalGetToBlock(subshaftPoint)
