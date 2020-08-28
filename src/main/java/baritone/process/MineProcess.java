@@ -231,7 +231,7 @@ public final class MineProcess extends BaritoneProcessHelper implements IMinePro
             public boolean isInGoal(int x, int y, int z) {
             return false;
           }
-        }
+        };
     }
     return new PathingCommand(subshaftGoto, PathingCommandType.REVALIDATE_GOAL_AND_PATH);
   }
